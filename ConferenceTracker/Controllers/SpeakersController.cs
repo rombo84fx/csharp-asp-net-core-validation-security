@@ -28,7 +28,7 @@ namespace ConferenceTracker.Controllers
                 return NotFound();
             }
 
-            var speaker = _speakerRepository.GetSpeaker((int)id);
+            var speaker = _speakerRepository.GetSpeaker((int) id);
             if (speaker == null)
             {
                 return NotFound();
@@ -46,10 +46,16 @@ namespace ConferenceTracker.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Administrators")]
-        public IActionResult Create(Speaker speaker)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Description", "EmailAddress", "PhoneNumber")]Speaker speaker)
         {
-            _speakerRepository.Create(speaker);
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _speakerRepository.Create(speaker);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(speaker);
         }
 
         [HttpGet]
@@ -61,11 +67,12 @@ namespace ConferenceTracker.Controllers
                 return NotFound();
             }
 
-            var speaker = _speakerRepository.GetSpeaker((int)id);
+            var speaker = _speakerRepository.GetSpeaker((int) id);
             if (speaker == null)
             {
                 return NotFound();
             }
+
             return View(speaker);
         }
 
@@ -93,6 +100,7 @@ namespace ConferenceTracker.Controllers
                     throw;
                 }
             }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -105,7 +113,7 @@ namespace ConferenceTracker.Controllers
                 return NotFound();
             }
 
-            var speaker = _speakerRepository.GetSpeaker((int)id);
+            var speaker = _speakerRepository.GetSpeaker((int) id);
             if (speaker == null)
             {
                 return NotFound();
